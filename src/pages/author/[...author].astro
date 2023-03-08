@@ -1,0 +1,48 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+
+import Layout from "../../layouts/default.astro";
+import PostCard from "../../components/PostCard.astro";
+
+import { slugify } from "../../js/utils";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => {
+    return !data.draft && data.date <= new Date();
+  });
+
+  // const authors = new Set();
+  // posts.forEach((post) => authors.add(post.data.author));
+  const authors = [...new Set(posts.map((post) => post.data.author).flat())];
+
+  return authors.map((author) => {
+    const authorPosts = posts.filter((post) => post.data.author === author);
+
+    return {
+      params: { author: slugify(author) },
+      props: {
+        name: author,
+        posts: authorPosts,
+      },
+    };
+  });
+}
+
+interface Props {
+  name: string;
+  posts: CollectionEntry<"blog">[];
+}
+
+const { posts, name } = Astro.props;
+---
+
+<Layout>
+  <h1>Posts by <span>{name}</span></h1>
+  {posts.map((post) => <PostCard data={post.data} url={post.slug} />)}
+</Layout>
+
+<style>
+  section > h1 {
+    margin-bottom: 1rem;
+  }
+</style>

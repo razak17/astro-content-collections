@@ -1,0 +1,74 @@
+---
+import { slugify, formatDate } from "../js/utils";
+
+const { data, url } = Astro.props;
+
+const { more } = Astro.props;
+---
+
+<article>
+  <div class="title">
+    <h2>
+      <a href={`/blog/${url}`}>{data.title}</a>
+    </h2>
+    <small class="category">
+      <a href={`/category/${slugify(data.category)}/`}>
+        {data.category}
+      </a>
+    </small>
+  </div>
+  <small>
+    by{" "}
+    <a href={`/author/${slugify(data.author)}/`}>
+      {data.author}
+    </a>{" "}
+    • {formatDate(data.date)}
+  </small>
+  <p class="desc">{data.share.description}</p>
+  {
+    more && (
+      <small class="more">
+        <a href={`/blog/${url}`}>full post &rarr;</a>
+      </small>
+    )
+  }
+</article>
+
+<style>
+  article {
+    margin-top: 2rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  h2 a:focus,
+  h2 a:hover {
+    text-decoration: underline;
+  }
+
+  .title {
+    display: flex;
+  }
+
+  .desc {
+    margin-top: 1rem;
+  }
+
+  .category {
+    margin-left: auto;
+  }
+  .more {
+    margin-top: 0.4rem;
+  }
+
+  .more a {
+    text-decoration: underline;
+  }
+</style>
